@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="كاشف رسائل التصيد الاحتيالية - حماية بريدك الإلكتروني">
+
+    <!-- Preconnect to Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <!-- Material Icons: display=block prevents showing text ligatures before load -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round&display=block" rel="stylesheet">
+
+    <!-- CRITICAL CSS: Hide icons immediately to purge any text flash -->
+    <style>
+        .material-icons-round {
+            visibility: hidden;
+            opacity: 0;
+        }
+
+        body.icons-loaded .material-icons-round {
+            visibility: visible;
+            opacity: 1;
+            transition: opacity 0.3s;
+        }
+    </style>
+
+    <title>كاشف رسائل التصيد - Phishing Email Detector</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- App Scripts (Loaded early with defer) -->
+    <script src="translations.js" defer></script>
+
+    <!-- App Architecture -->
+    <script src="js/state.js" defer></script>
+    <script src="js/services/api_service.js" defer></script>
+
+    <!-- Screens Logic -->
+    <script src="js/screens/home_screen.js" defer></script>
+    <script src="js/screens/scan_screen.js" defer></script>
+    <script src="js/screens/result_screen.js" defer></script>
+
+    <!-- Main Entry Point -->
+    <script src="js/main.js" defer></script>
+</head>
+
+<body>
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="loading-screen">
+        <div class="loading-content">
+            <!-- Icons removed to prevent text flash before font load -->
+            <h2 class="title-main">Phishing Email</h2>
+            <h2 class="title-accent">Detector</h2>
+            <p class="subtitle">Protect Your Email</p>
+            <div class="loader"></div>
+        </div>
+    </div>
+
+    <!-- Main App Container -->
+    <div id="app" class="app-container" style="display: none;">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-content">
+                <div class="logo">
+                    <span class="material-icons-round logo-icon">shield</span>
+                    <h1 id="app-title">كاشف رسائل التصيد</h1>
+                </div>
+                <div class="language-selector">
+                    <button id="lang-btn" class="lang-button">
+                        <span class="material-icons-round">language</span>
+                        <span id="current-lang">EN</span>
+                        <span class="material-icons-round arrow">arrow_drop_down</span>
+                    </button>
+                    <div id="lang-menu" class="lang-menu hidden">
+                        <button class="lang-option" data-lang="ar">
+                            <span class="flag">🇸🇦</span>
+                            <span>العربية</span>
+                            <span class="material-icons-round check" id="check-ar">check_circle</span>
+                        </button>
+                        <button class="lang-option" data-lang="en">
+                            <span class="flag">🇬🇧</span>
+                            <span>English</span>
+                            <span class="material-icons-round check hidden" id="check-en">check_circle</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Home Screen -->
+        <main id="home-screen" class="screen active">
+            <div class="container home-container">
+                <div class="hero-section">
+                    <div class="icon-circle">
+                        <span class="material-icons-round shield-large">shield</span>
+                        <div class="email-icon-badge">
+                            <span class="material-icons-round">email</span>
+                        </div>
+                    </div>
+                    <h2 id="welcome-title">مرحباً بك في كاشف رسائل التصيد</h2>
+                    <p id="welcome-subtitle">احمِ نفسك من رسائل البريد الإلكتروني الاحتيالية</p>
+                </div>
+                
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon-bg" style="background: rgba(30, 58, 138, 0.1); color: #1E3A8A;">
+                            <span class="material-icons-round">security</span>
+                        </div>
+                        
+
+                        <div class="feature-text">
+                            <h3 id="feature-1-title">حماية متقدمة</h3>
+                            <p id="feature-1-desc">كشف تلقائي للرسائل المشبوهة</p>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon-bg" style="background: rgba(6, 182, 212, 0.1); color: #06B6D4;">
+                            <span class="material-icons-round">analytics</span>
+                        </div>
+                        <div class="feature-text">
+                            <h3 id="feature-2-title">تحليل ذكي</h3>
+                            <p id="feature-2-desc">فحص شامل لمحتوى الرسائل</p>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon-bg" style="background: rgba(249, 115, 22, 0.1); color: #F97316;">
+                            <span class="material-icons-round">verified_user</span>
+                        </div>
+                        <div class="feature-text">
+                            <h3 id="feature-3-title">موثوقية عالية</h3>
+                            <p id="feature-3-desc">دقة في اكتشاف التهديدات</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="fab-container">
+                <button id="scan-btn" class="fab-button">
+                    <span class="material-icons-round">email</span>
+                    <span id="scan-btn-text">فحص رسالة</span>
+                </button>
+            </div>
+        </main>
+
+        <!-- Scan Screen -->
+        <main id="scan-screen" class="screen">
+            <header class="screen-header">
+                <button id="back-btn" class="icon-button">
+                    <span class="material-icons-round">arrow_back</span>
+                </button>
+                <h2 id="scan-title">تحليل الرسالة</h2>
+            </header>
+
+            <div class="container">
+                <!-- Input Type Selector -->
+                <div class="input-selector-card">
+                    <h3 id="select-type-title">اختر نوع الإدخال</h3>
+                    <div class="selector-buttons">
+                        <button class="selector-btn active" data-type="text">
+                            <span class="material-icons-round">title</span>
+                            <span id="type-text">نص</span>
+                        </button>
+                        <button class="selector-btn" data-type="file">
+                            <span class="material-icons-round">upload_file</span>
+                            <span id="type-file">ملف</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Text Input: Split into Header Card and Input Card (Flutter Style) -->
+                <div id="text-input-section" class="input-section active">
+
+                    <!-- 1. Header Card -->
+                    <div class="input-header-card">
+                        <span class="material-icons-round large-blue-icon">email</span>
+                        <h4 id="paste-label">الصق نص الرسالة هنا</h4>
+                    </div>
+
+                    <div class="spacer-16"></div>
+
+                    <!-- 2. Textarea Card -->
+                    <div class="textarea-card-container">
+                        <textarea id="email-text" class="email-textarea" maxlength="5000"></textarea>
+                        <div class="placeholder-overlay" id="textarea-placeholder">
+                            أدخل محتوى الرسالة التي تريد تحليلها...
+                        </div>
+                    </div>
+                </div>
+
+                <!-- File Input -->
+                <div id="file-input-section" class="input-section">
+                    <div class="input-card file-upload-card">
+                        <span class="material-icons-round upload-icon">cloud_upload</span>
+                        <h4 id="choose-file-title">اختر الملف</h4>
+
+                        <input type="file" id="file-input" accept=".html,.htm,.txt,.eml" hidden>
+                        <button id="choose-file-btn" class="choose-file-button">
+                            <span class="material-icons-round">attach_file</span>
+                            <span id="choose-file-text"> اختر الملف</span>
+                        </button>
+
+                        <div id="file-info" class="file-info hidden">
+                            <span class="material-icons-round">insert_drive_file</span>
+                            <span id="file-name"></span>
+                            <span id="file-size-text"></span>
+                        </div>
+
+                        <p id="supported-formats" class="supported-text">الصيغ المدعومة: HTML, TXT, EML</p>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button id="clear-btn" class="secondary-button outlined-red">
+                        <span class="material-icons-round">delete_outline</span>
+                        <span id="clear-text">مسح</span>
+                    </button>
+                    <button id="analyze-btn" class="primary-button flex-2">
+                        <span class="material-icons-round" id="analyze-icon">analytics</span>
+                        <span id="analyze-text">تحليل الآن</span>
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <!-- Result Screen: Exact Flutter Match -->
+        <main id="result-screen" class="screen">
+            <!-- Header: Transparent, Back Btn (Leading), Title (Centered) -->
+            <header class="screen-header result-header">
+                <button id="result-back-btn" class="icon-button">
+                    <span class="material-icons-round">arrow_back</span>
+                </button>
+                <h2 id="result-title">نتيجة التحليل</h2>
+            </header>
+
+            <div class="result-screen-content">
+                <!-- Risk Wheel: Stacked Circles -->
+                <div class="risk-wheel-container">
+                    <svg class="progress-ring" width="200" height="200">
+                        <!-- Gray Background Circle -->
+                        <circle class="progress-ring-circle-bg" stroke-width="16" fill="transparent" r="80" cx="100"
+                            cy="100" />
+                        <!-- Colored Progress Circle -->
+                        <circle id="progress-circle" class="progress-ring-circle" stroke-width="16" fill="transparent"
+                            r="80" cx="100" cy="100" />
+                    </svg>
+
+                    <!-- Centered Score Text (Inside Stack) -->
+                    <div class="score-text-center">
+                        <div class="score-value" id="score-text-container">
+                            <span id="risk-score">0</span>%
+                        </div>
+                        <div class="score-label" id="score-label">نسبة الخطورة</div>
+                    </div>
+                </div>
+
+                <div class="spacer-16"></div> <!-- SizedBox(height: 40 in Flutter approx) -->
+
+                <!-- Status Card -->
+                <div class="status-card" id="status-card">
+                    <span class="material-icons-round" id="result-icon">check_circle</span>
+                    <div class="status-text">
+                        <span class="status-label" id="risk-level-label">مستوى الخطورة</span>
+                        <h3 id="risk-level">آمن</h3>
+                    </div>
+                </div>
+                
+                <!-- قسم تقرير التحليل المطور -->
+                <div id="ai-report-section" class="hidden" style="margin-top: 20px; background: #f8fafc; padding: 16px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); border: 2px solid #3b82f6; max-width: 700px; margin-left: auto; margin-right: auto; overflow: hidden; width: 98%;">
+                    <h3 style="color: #1e293b; margin-bottom: 12px; border-bottom: 2px solid #3b82f6; padding-bottom: 8px; display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 700;">
+                        تقرير التحليل الذكي
+                    </h3>
+                    
+                    <!-- قسم تحليل النص -->
+                    <div id="ai-text-analysis" style="color: #334155; line-height: 1.6; font-size: 14px; margin-bottom: 8px; font-weight: 500; text-align: start; padding: 16px; background: #e0f2fe; border-radius: 8px; border-left: 4px solid #0284c7; word-break: break-all; overflow-wrap: break-word; direction: auto;">
+                        <!-- ملخص التحليل النصي سيظهر هنا -->
+                    </div>
+                    
+                    <!-- قسم الأسباب -->
+                    <div id="ai-reasons-list" style="color: #334155; line-height: 1.6; font-size: 14px; font-weight: 500; text-align: start; padding: 16px; background: #fef3c7; border-radius: 8px; border-left: 4px solid #f59e0b; margin-bottom: 8px; word-break: break-all; overflow-wrap: break-word; direction: auto;">
+                        <!-- الأسباب ستظهر هنا -->
+                    </div>
+                    
+                    <!-- قسم تحليل الروابط -->
+                    <div id="ai-url-analysis" style="color: #334155; line-height: 1.6; font-size: 14px; margin-top: 12px; font-weight: 500; text-align: start; padding: 16px; background: #dcfce7; border-radius: 8px; border-left: 4px solid #22c55e; word-break: break-all; overflow-wrap: break-word; direction: auto;">
+                        <!-- تحليل الروابط سيظهر هنا -->
+                    </div>
+                    
+                    <!-- نتائج VirusTotal -->
+                    <div id="virustotal-section" class="hidden" style="margin-top: 16px; padding: 16px; background: #fee2e2; border: 2px solid #ef4444; border-radius: 8px;">
+                        <h4 style="margin: 0 0 8px; font-weight:700; color: #991b1b; display: flex; align-items: center; gap: 6px; font-size: 14px;">
+                            <span class="material-icons-round" style="font-size:16px; color: #dc2626;">security</span>
+                            نتائج فحص الروابط
+                        </h4>
+                        <div id="virustotal-results" style="text-align: start; color: #7f1d1d; font-weight: 500; word-break: break-all; overflow-wrap: break-word; direction: auto;"></div>
+                    </div>
+                    
+                    <!-- قسم التوصية -->
+                    <div id="ai-recommendation" style="margin-top: 16px; padding: 16px; background: #f0f9ff; border: 2px solid #0ea5e9; border-radius: 8px; font-weight: 600; color: #075985; font-size: 14px; text-align: start; word-break: break-all; overflow-wrap: break-word; direction: auto;">
+                        <!-- التوصية ستظهر هنا -->
+                    </div>
+                </div>
+
+                <div class="spacer" style="flex: 1;"></div> <!-- Spacer() -->
+
+                <!-- Action Buttons -->
+                <div class="result-actions" style="width: 100%; max-width: 600px;">
+                    <button id="scan-another-btn" class="primary-button">
+                        <span id="scan-another-text">فحص رسالة أخرى</span>
+                    </button>
+                    <div class="spacer-16"></div>
+                    <button id="home-btn" class="text-button">
+                        <span id="home-text">العودة للرئيسية</span>
+                    </button>
+                    <div class="spacer-16"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+
+</html>
