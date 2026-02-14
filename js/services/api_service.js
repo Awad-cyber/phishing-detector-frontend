@@ -1,7 +1,7 @@
 // API Service – يتصل بخادم Node (مع VirusTotal) أو Flask مباشرة كبديل
 const ApiService = {
     /** خادم Node المتقدم (منفذ 3000): يجمع تحليل Flask + فحص الروابط عبر VirusTotal */
-    advancedBackendUrl: 'http://localhost:3001',
+    advancedBackendUrl: 'https://phishing-detector-backend-djh1.onrender.com',
     /** خادم Flask (منفذ 5000): تحليل النموذج والقواعد فقط – يُستخدم إذا كان Node غير شغال */
     flaskBackendUrl: 'http://localhost:5000',
 
